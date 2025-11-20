@@ -1,40 +1,48 @@
 pipeline {
     agent any
 
+    parameters {
+        string(
+            name: 'STAGES_TO_RUN',
+            defaultValue: 'Build,Test,Deploy',
+            description: 'Enter stages to run (comma-separated): Build, Test, Deploy'
+        )
+    }
+
     stages {
 
         stage('Build') {
+            when {
+                expression { 
+                    return params.STAGES_TO_RUN.toLowerCase().contains('build')
+                }
+            }
             steps {
-                echo "Building the app..."
+                echo "Running BUILD stage..."
             }
         }
 
-        stage('Tests Only on Master') {
+        stage('Test') {
             when {
-                branch 'master'
+                expression { 
+                    return params.STAGES_TO_RUN.toLowerCase().contains('test')
+                }
             }
-            parallel {
-                stage('Test-1') {
-                    steps { 
-                        echo "Running Test 1"
-                        sh "sleep 3"
-                    }
-                }
-
-                stage('Test-2') {
-                    steps { 
-                        echo "Running Test 2"
-                        sh "sleep 3"
-                    }
-                }
+            steps {
+                echo "Running TEST stage..."
             }
         }
 
         stage('Deploy') {
+            when {
+                expression { 
+                    return params.STAGES_TO_RUN.toLowerCase().contains('deploy')
+                }
+            }
             steps {
-                echo "Deploying..."
+                echo "Running DEPLOY stage..."
             }
         }
-
     }
 }
+
