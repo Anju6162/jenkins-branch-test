@@ -5,28 +5,34 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo "Build stage running..."
+                echo "Building the app..."
             }
         }
 
-        stage('Tests Only On Master') {
+        stage('Tests Only on Master') {
             when {
                 branch 'master'
             }
-            stages {
-
-                stage('Unit Test') {
-                    steps {
-                        echo "Running Unit Tests..."
+            parallel {
+                stage('Test-1') {
+                    steps { 
+                        echo "Running Test 1"
+                        sh "sleep 3"
                     }
                 }
 
-                stage('Integration Test') {
-                    steps {
-                        echo "Running Integration Tests..."
+                stage('Test-2') {
+                    steps { 
+                        echo "Running Test 2"
+                        sh "sleep 3"
                     }
                 }
+            }
+        }
 
+        stage('Deploy') {
+            steps {
+                echo "Deploying..."
             }
         }
 
