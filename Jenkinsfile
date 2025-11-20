@@ -1,48 +1,35 @@
 pipeline {
     agent any
 
-    parameters {
-        string(
-            name: 'STAGES_TO_RUN',
-            defaultValue: 'Build,Test,Deploy',
-            description: 'Enter stages to run (comma-separated): Build, Test, Deploy'
-        )
-    }
-
     stages {
 
         stage('Build') {
-            when {
-                expression { 
-                    return params.STAGES_TO_RUN.toLowerCase().contains('build')
-                }
-            }
             steps {
-                echo "Running BUILD stage..."
+                echo "Build stage running..."
             }
         }
 
-        stage('Test') {
+        stage('Tests Only On Master') {
             when {
-                expression { 
-                    return params.STAGES_TO_RUN.toLowerCase().contains('test')
-                }
+                branch 'master'
             }
-            steps {
-                echo "Running TEST stage..."
+            stages {
+
+                stage('Unit Test') {
+                    steps {
+                        echo "Running Unit Tests..."
+                    }
+                }
+
+                stage('Integration Test') {
+                    steps {
+                        echo "Running Integration Tests..."
+                    }
+                }
+
             }
         }
 
-        stage('Deploy') {
-            when {
-                expression { 
-                    return params.STAGES_TO_RUN.toLowerCase().contains('deploy')
-                }
-            }
-            steps {
-                echo "Running DEPLOY stage..."
-            }
-        }
     }
 }
 
