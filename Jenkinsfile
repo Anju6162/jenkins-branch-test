@@ -2,38 +2,36 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'STAGE_TO_RUN', choices: ['all', 'testA', 'testB', 'deploy'], description: 'Select stage to run')
+        // This reflects your Active Choices parameter
+        string(name: 'STAGES_TO_RUN', defaultValue: '', description: 'Selected stages to run (from Multiselect)')
     }
 
     stages {
 
-        stage('testA') {
+        stage('Test A') {
             when {
-                expression { params.STAGE_TO_RUN == 'testA' || params.STAGE_TO_RUN == 'all' }
+                expression { return params.STAGES_TO_RUN.contains("testA") }
             }
             steps {
-                echo "Running testA..."
-                // sh './run-testA.sh'
+                echo "Running Test A..."
             }
         }
 
-        stage('testB') {
+        stage('Test B') {
             when {
-                expression { params.STAGE_TO_RUN == 'testB' || params.STAGE_TO_RUN == 'all' }
+                expression { return params.STAGES_TO_RUN.contains("testB") }
             }
             steps {
-                echo "Running testB..."
-                // sh './run-testB.sh'
+                echo "Running Test B..."
             }
         }
 
-        stage('deploy') {
+        stage('Deploy') {
             when {
-                expression { params.STAGE_TO_RUN == 'deploy' }
+                expression { return params.STAGES_TO_RUN.contains("deploy") }
             }
             steps {
-                echo "Running deploy..."
-                // sh './deploy.sh'
+                echo "Running Deploy..."
             }
         }
     }
