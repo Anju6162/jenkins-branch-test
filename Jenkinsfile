@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        // This reflects your Active Choices parameter
-        string(name: 'STAGES_TO_RUN', defaultValue: '', description: 'Selected stages to run (from Multiselect)')
-    }
-
     stages {
 
         stage('Test A') {
