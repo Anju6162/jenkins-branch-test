@@ -1,34 +1,41 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-
-        stage('Build') {
-            steps {
-                echo "Build stage running..."
-            }
-        }
-
-        stage('Tests Only On Master') {
-            when {
-                branch 'master'
-            }
-            stages {
-
-                stage('Unit Test') {
-                    steps {
-                        echo "Running Unit Tests..."
-                    }
-                }
-
-                stage('Integration Test') {
-                    steps {
-                        echo "Running Integration Tests..."
-                    }
-                }
-
-            }
-        }
-
+  stages {
+    stage('Build') {
+      steps {
+        echo "Building on branch: ${env.BRANCH_NAME}"
+        // e.g. sh 'mvn -B -DskipTests package'
+      }
     }
+
+    stage('Unit Test (master only)') {
+      when { branch 'master' }
+      steps {
+        echo 'Running Unit Tests (only on master)'
+        // sh 'mvn test -Dtest=Unit*'
+      }
+    }
+
+    stage('Integration Test (master only)') {
+      when { branch 'master' }
+      steps {
+        echo 'Running Integration Tests (only on master)'
+        // sh 'mvn verify -Pintegration'
+      }
+    }
+
+    stage('Publish / Archive') {
+      steps {
+        echo 'Publish artifacts or results'
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Finished build for ${env.BRANCH_NAME}"
+    }
+  }
 }
+
